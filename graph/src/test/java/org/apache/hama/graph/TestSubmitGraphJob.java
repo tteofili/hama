@@ -60,6 +60,7 @@ public class TestSubmitGraphJob extends TestBSPMasterGroomServer {
     BSPJobClient jobClient = new BSPJobClient(configuration);
     configuration.setInt(Constants.ZOOKEEPER_SESSION_TIMEOUT, 6000);
     configuration.set("hama.graph.self.ref", "true");
+    configuration.setClass("hama.graph.vertices.info", OffHeapVerticesInfo.class, VerticesInfo.class);
     ClusterStatus cluster = jobClient.getClusterStatus(false);
     assertEquals(this.numOfGroom, cluster.getGroomServers());
     LOG.info("Client finishes execution job.");
