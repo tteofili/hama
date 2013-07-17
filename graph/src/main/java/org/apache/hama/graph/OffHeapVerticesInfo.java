@@ -81,7 +81,6 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
 
     @Override
     public void finishAdditions() {
-        vertices.collectAll();
     }
 
     @Override
