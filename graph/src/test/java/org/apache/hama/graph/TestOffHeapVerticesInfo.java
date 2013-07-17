@@ -45,7 +45,7 @@ public class TestOffHeapVerticesInfo {
     conf.set(GraphJob.VERTEX_ID_CLASS_ATTR, Text.class.getName());
     conf.set(GraphJob.VERTEX_VALUE_CLASS_ATTR, DoubleWritable.class.getName());
     GraphJobRunner.<Text, NullWritable, DoubleWritable> initClasses(conf);
-    TaskAttemptID attempt = new TaskAttemptID("omg", 1, 1, 0);
+    TaskAttemptID attempt = new TaskAttemptID("123", 1, 1, 0);
     try {
       ArrayList<PageRankVertex> list = new ArrayList<PageRankVertex>();
 
@@ -140,7 +140,7 @@ public class TestOffHeapVerticesInfo {
     int i = 10000;
     for (int n = 0; n < i; n++) {
       Vertex<Text, NullWritable, DoubleWritable> vertex = new PageRankVertex();
-      vertex.setVertexID(new Text(String.valueOf(r.nextFloat())));
+      vertex.setVertexID(new Text(String.valueOf(r.nextInt())));
       vertex.setValue(new DoubleWritable(r.nextDouble()));
       verticesInfo.addVertex(vertex);
     }
