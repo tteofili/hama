@@ -92,12 +92,7 @@ public final class ListVerticesInfo<V extends WritableComparable<V>, E extends W
     Collections.sort(vertices);
   }
 
-  @Override
-  public boolean isFinishedAdditions() {
-    return false;
-  }
-
-  @Override
+   @Override
   public void finishSuperstep() {
 
   }

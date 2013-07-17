@@ -52,6 +52,8 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
 
     private boolean strict;
 
+    private boolean finishedAdditions;
+
     @Override
     public void init(GraphJobRunner<V, E, M> runner, Configuration conf, TaskAttemptID attempt) throws IOException {
         this.strict = conf.getBoolean(DM_STRICT_ITERATOR, true);
@@ -81,6 +83,7 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
 
     @Override
     public void finishAdditions() {
+        finishedAdditions = true;
     }
 
     @Override
@@ -93,11 +96,6 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
 
     @Override
     public void finishVertexComputation(Vertex<V, E, M> vertex) throws IOException {
-    }
-
-    @Override
-    public boolean isFinishedAdditions() {
-        return false;
     }
 
     public void clear() {

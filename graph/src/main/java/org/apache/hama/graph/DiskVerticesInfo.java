@@ -17,8 +17,6 @@
  */
 package org.apache.hama.graph;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -35,6 +33,8 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hama.bsp.TaskAttemptID;
 import org.apache.hama.graph.IDSkippingIterator.Strategy;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 @SuppressWarnings("rawtypes")
 public final class DiskVerticesInfo<V extends WritableComparable, E extends Writable, M extends Writable>
@@ -175,11 +175,6 @@ public final class DiskVerticesInfo<V extends WritableComparable, E extends Writ
       arr[i] = lst.get(i);
     }
     return arr;
-  }
-
-  @Override
-  public boolean isFinishedAdditions() {
-    return lockedAdditions;
   }
 
   @Override
