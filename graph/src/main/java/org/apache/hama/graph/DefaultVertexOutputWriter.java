@@ -47,7 +47,6 @@ public class DefaultVertexOutputWriter<V extends WritableComparable, E extends W
       throws IOException {
     assert vertex.getVertexID() != null : "vertex id cannot be null";
     assert vertex.getValue() != null : "vertex value cannot be null";
-    System.err.println("vertexid: "+vertex.getVertexID()+" - vertexval: "+vertex.getValue());
     peer.write(vertex.getVertexID(), vertex.getValue());
   }
 
