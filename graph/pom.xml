@@ -47,6 +47,21 @@
       <version>0.2-SNAPSHOT</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.directmemory</groupId>
+      <artifactId>directmemory-msgpack</artifactId>
+      <version>0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.directmemory</groupId>
+      <artifactId>directmemory-protobuf</artifactId>
+      <version>0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.directmemory</groupId>
+      <artifactId>directmemory-protostuff</artifactId>
+      <version>0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.hama</groupId>
       <artifactId>hama-core</artifactId>
       <version>${project.version}</version>
@@ -60,9 +75,6 @@
       <plugins>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <!--<configuration>-->
-            <!--<forkMode>once</forkMode>-->
-          <!--</configuration>-->
         </plugin>
       </plugins>
     </pluginManagement>

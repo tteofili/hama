@@ -20,7 +20,6 @@ package org.apache.hama.graph;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
@@ -114,9 +113,9 @@ public class TestSubmitGraphJob extends TestBSPMasterGroomServer {
   }
 
   protected void injectVerticesInfo() {
-    Class<? extends VerticesInfo> verticesInfoClass = vi.get(Math.abs(new Random().nextInt() % 3));
-    LOG.info("using vertices info of type : "+verticesInfoClass.getName());
-    configuration.setClass("hama.graph.vertices.info", verticesInfoClass, VerticesInfo.class);
+//    Class<? extends VerticesInfo> verticesInfoClass = vi.get(Math.abs(new Random().nextInt() % 3));
+//    LOG.info("using vertices info of type : "+verticesInfoClass.getName());
+    configuration.setClass("hama.graph.vertices.info", OffHeapVerticesInfo.class, VerticesInfo.class);
   }
 
   private void verifyResult() throws IOException {

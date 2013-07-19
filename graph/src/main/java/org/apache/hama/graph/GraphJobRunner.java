@@ -402,7 +402,7 @@ public final class GraphJobRunner<V extends WritableComparable, E extends Writab
     while ((record = peer.readNext()) != null) {
       converted = converter.convertRecord(record, conf);
       vertex = (Vertex<V, E, M>) converted.getKey();
-      vertex.runner = this;
+      vertex.setRunner(this);
       vertex.setup(conf);
 
       if (selfReference) {
@@ -414,7 +414,7 @@ public final class GraphJobRunner<V extends WritableComparable, E extends Writab
       // Reinitializing vertex object for memory based implementations of
       // VerticesInfo
       vertex = GraphJobRunner.<V, E, M> newVertexInstance(VERTEX_CLASS);
-      vertex.runner = this;
+      vertex.setRunner(this);
     }
     vertices.finishAdditions();
     // finish the "superstep" because we have written a new file here

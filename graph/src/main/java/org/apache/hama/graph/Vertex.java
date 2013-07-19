@@ -50,7 +50,7 @@ import org.apache.hama.bsp.Partitioner;
 public abstract class Vertex<V extends WritableComparable, E extends Writable, M extends Writable>
     implements VertexInterface<V, E, M> {
 
-  GraphJobRunner<?, ?, ?> runner;
+  private transient GraphJobRunner<V, E, M> runner;
 
   private V vertexID;
   private M value;
@@ -342,4 +342,11 @@ public abstract class Vertex<V extends WritableComparable, E extends Writable, M
 
   }
 
+  protected void setRunner(GraphJobRunner<V, E, M> runner) {
+    this.runner = runner;
+  }
+
+  protected GraphJobRunner<V, E, M> getRunner() {
+    return runner;
+  }
 }

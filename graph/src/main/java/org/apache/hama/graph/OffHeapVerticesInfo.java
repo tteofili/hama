@@ -51,11 +51,11 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
     private CacheService<V, Vertex<V, E, M>> vertices;
 
     private boolean strict;
-
-    private boolean finishedAdditions;
+    private GraphJobRunner<V, E, M> runner;
 
     @Override
     public void init(GraphJobRunner<V, E, M> runner, Configuration conf, TaskAttemptID attempt) throws IOException {
+        this.runner = runner;
         this.strict = conf.getBoolean(DM_STRICT_ITERATOR, true);
         DirectMemory<V, Vertex<V, E, M>> dm = new DirectMemory<V, Vertex<V, E, M>>()
                 .setNumberOfBuffers(conf.getInt(DM_BUFFERS, 100))
@@ -70,6 +70,7 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
         }
 
         this.vertices = dm.newCacheService();
+
     }
 
     @Override
@@ -83,7 +84,6 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
 
     @Override
     public void finishAdditions() {
-        finishedAdditions = true;
     }
 
     @Override
@@ -96,6 +96,7 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
 
     @Override
     public void finishVertexComputation(Vertex<V, E, M> vertex) throws IOException {
+        vertices.put(vertex.getVertexID(), vertex);
     }
 
     public void clear() {
@@ -135,6 +136,9 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
             @Override
             public Vertex<V, E, M> next() {
                 currentIndex++;
+                if (currentVertex.getRunner() == null) {
+                  currentVertex.setRunner(runner);
+                }
                 return currentVertex;
             }
 

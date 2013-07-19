@@ -256,7 +256,7 @@ public final class DiskVerticesInfo<V extends WritableComparable, E extends Writ
       if (cachedVertexInstance == null) {
         cachedVertexInstance = GraphJobRunner
             .<V, E, M> newVertexInstance(GraphJobRunner.VERTEX_CLASS);
-        cachedVertexInstance.runner = runner;
+        cachedVertexInstance.setRunner(runner);
       }
       ensureVertexIDNotNull();
     } catch (IOException e) {
