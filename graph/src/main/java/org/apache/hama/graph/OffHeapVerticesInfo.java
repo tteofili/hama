@@ -36,7 +36,7 @@ import org.apache.hama.util.ReflectionUtils;
 /**
  * An off heap version of a {@link org.apache.hama.graph.Vertex} storage.
  */
-public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writable, M extends Writable>
+public class OffHeapVerticesInfo<V extends WritableComparable<?>, E extends Writable, M extends Writable>
         implements VerticesInfo<V, E, M> {
 
     public static final String DM_STRICT_ITERATOR = "dm.iterator.strict";
@@ -144,6 +144,16 @@ public class OffHeapVerticesInfo<V extends WritableComparable, E extends Writabl
 
         };
 
+    }
+
+    @Override
+    public void removeVertex(V vertexID) {
+      throw new UnsupportedOperationException ("Not yet implemented");
+    }
+
+    @Override
+    public void finishRemovals() {
+      throw new UnsupportedOperationException ("Not yet implemented");      
     }
 
 }

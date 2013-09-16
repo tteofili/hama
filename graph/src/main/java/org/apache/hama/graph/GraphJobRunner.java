@@ -453,7 +453,7 @@ public final class GraphJobRunner<V extends WritableComparable, E extends Writab
    * @throws IOException 
    */
   private void addVertex(Vertex<V, E, M> vertex) throws IOException {
-    vertex.runner = this;
+    vertex.setRunner(this);
     vertex.setup(conf);
           
     if (conf.getBoolean("hama.graph.self.ref", false)) {
