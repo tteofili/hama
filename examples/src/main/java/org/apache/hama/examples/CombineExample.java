@@ -85,15 +85,14 @@ public class CombineExample {
   static void printOutput(HamaConfiguration conf) throws IOException {
     FileSystem fs = FileSystem.get(conf);
     FileStatus[] files = fs.listStatus(TMP_OUTPUT);
-    for (int i = 0; i < files.length; i++) {
-      if (files[i].getLen() > 0) {
-        FSDataInputStream in = fs.open(files[i].getPath());
+    for (FileStatus file : files) {
+      if (file.getLen() > 0) {
+        FSDataInputStream in = fs.open(file.getPath());
         IOUtils.copyBytes(in, System.out, conf, false);
         in.close();
         break;
       }
     }
-
     fs.delete(TMP_OUTPUT, true);
   }
 
