@@ -18,7 +18,6 @@
 package org.apache.hama.bsp;
 
 import java.io.IOException;
-
 import org.apache.hadoop.io.Writable;
 import org.apache.hama.bsp.sync.SyncException;
 
@@ -27,38 +26,44 @@ import org.apache.hama.bsp.sync.SyncException;
  * BSP based algorithm. The implementing algorithm takes {@link BSPPeer}s as
  * parameters which are responsible for communication, reading K1-V1 inputs,
  * collecting k2-V2 outputs and exchanging messages of type M.
+ *
+ * @param <K1> the type of keys to be read from input
+ * @param <V1> the type of values to be read from input
+ * @param <K2> the type of keys to be written as output
+ * @param <V2> the type of values to be written as output
+ * @param <M>  the type of messages to be exchanged between {@link org.apache.hama.bsp.BSPPeer}s
  */
 public interface BSPInterface<K1, V1, K2, V2, M extends Writable> {
 
-  /**
-   * This method is your computation method, the main work of your BSP should be
-   * done here.
-   * 
-   * @param peer Your BSPPeer instance.
-   * @throws java.io.IOException
-   * @throws org.apache.hama.bsp.sync.SyncException
-   * @throws InterruptedException
-   */
-  public void bsp(BSPPeer<K1, V1, K2, V2, M> peer) throws IOException,
-      SyncException, InterruptedException;
+    /**
+     * This method is your computation method, the main work of your BSP should be
+     * done here.
+     *
+     * @param peer Your BSPPeer instance.
+     * @throws java.io.IOException
+     * @throws org.apache.hama.bsp.sync.SyncException
+     * @throws InterruptedException
+     */
+    public void bsp(BSPPeer<K1, V1, K2, V2, M> peer) throws IOException,
+            SyncException, InterruptedException;
 
-  /**
-   * This method is called before the BSP method. It can be used for setup
-   * purposes.
-   * 
-   * @param peer Your BSPPeer instance.
-   * @throws IOException
-   */
-  public void setup(BSPPeer<K1, V1, K2, V2, M> peer) throws IOException,
-      SyncException, InterruptedException;
+    /**
+     * This method is called before the BSP method. It can be used for setup
+     * purposes.
+     *
+     * @param peer Your BSPPeer instance.
+     * @throws IOException
+     */
+    public void setup(BSPPeer<K1, V1, K2, V2, M> peer) throws IOException,
+            SyncException, InterruptedException;
 
-  /**
-   * This method is called after the BSP method. It can be used for cleanup
-   * purposes. Cleanup is guranteed to be called after the BSP runs, even in
-   * case of exceptions.
-   * 
-   * @param peer Your BSPPeer instance.
-   * @throws IOException
-   */
-  public void cleanup(BSPPeer<K1, V1, K2, V2, M> peer) throws IOException;
+    /**
+     * This method is called after the BSP method. It can be used for cleanup
+     * purposes. Cleanup is guranteed to be called after the BSP runs, even in
+     * case of exceptions.
+     *
+     * @param peer Your BSPPeer instance.
+     * @throws IOException
+     */
+    public void cleanup(BSPPeer<K1, V1, K2, V2, M> peer) throws IOException;
 }
