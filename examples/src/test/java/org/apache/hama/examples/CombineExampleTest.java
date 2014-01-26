@@ -17,8 +17,6 @@
  */
 package org.apache.hama.examples;
 
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 
 /**
@@ -26,12 +24,7 @@ import org.junit.Test;
  */
 public class CombineExampleTest {
   @Test
-  public void testCorrectCombineExecution() {
-    try {
-      CombineExample.main(new String[] {});
-    } catch (Exception e) {
-      fail(e.getLocalizedMessage());
-    }
+  public void testCorrectCombineExecution() throws Exception {
+    CombineExample.main(new String[] {});
   }
-
 }
