@@ -227,7 +227,7 @@ public class BSPJob extends BSPJobContext {
     }
 
     if (verbose) {
-      jobClient.monitorAndPrintJob(this, info);
+      jobClient.monitorAndPrintJob(info);
     } else {
       info.waitForCompletion();
     }

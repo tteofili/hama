@@ -32,12 +32,12 @@ import org.junit.Test;
 
 public class SymmetricMatrixGenTest {
   protected static Log LOG = LogFactory.getLog(SymmetricMatrixGenTest.class);
-  private static String TEST_OUTPUT = "/tmp/test";
 
   @Test
   public void testGraphGenerator() throws Exception {
     Configuration conf = new Configuration();
 
+    String TEST_OUTPUT = "/tmp/test";
     SymmetricMatrixGen.main(new String[] { "20", "10", TEST_OUTPUT, "3" });
     FileSystem fs = FileSystem.get(conf);
 

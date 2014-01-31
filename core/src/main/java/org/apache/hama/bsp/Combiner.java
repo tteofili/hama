@@ -19,7 +19,7 @@ package org.apache.hama.bsp;
 
 import org.apache.hadoop.io.Writable;
 
-public abstract class Combiner<M extends Writable> {
+public interface Combiner<M extends Writable> {
 
   /**
    * Combines messages
@@ -27,6 +27,6 @@ public abstract class Combiner<M extends Writable> {
    * @param messages
    * @return the combined message
    */
-  public abstract M combine(Iterable<M> messages);
+  public M combine(Iterable<M> messages);
 
 }

@@ -20,38 +20,34 @@ package org.apache.hama.examples;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import junit.framework.TestCase;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hama.HamaConfiguration;
 import org.apache.hama.examples.util.FastGraphGen;
+import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Testcase for {@link PageRank}
  */
-public class PageRankTest extends TestCase {
+public class PageRankTest {
   private static String INPUT = "/tmp/page-tmp.seq";
-  private static String TEXT_INPUT = "/tmp/page.txt";
   private static String TEXT_OUTPUT = INPUT + "page.txt.seq";
   private static String OUTPUT = "/tmp/page-out";
   private Configuration conf = new HamaConfiguration();
   private FileSystem fs;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void setUp() throws Exception {
     fs = FileSystem.get(conf);
   }
 
   @Test
-  public void testPageRank() throws IOException, InterruptedException,
-      ClassNotFoundException, InstantiationException, IllegalAccessException {
-
+  public void testPageRank() throws Exception {
     generateTestData();
     try {
       PageRank.main(new String[] { INPUT, OUTPUT, "3" });
@@ -77,12 +73,8 @@ public class PageRankTest extends TestCase {
     assertTrue("Sum was: " + sum, sum > 0.9 && sum < 1.1);
   }
 
-  private void generateTestData() {
-    try {
+  private void generateTestData() throws Exception {
       FastGraphGen.main(new String[] { "400", "10", INPUT, "2" });
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   private void deleteTempDirs() {
@@ -91,7 +83,8 @@ public class PageRankTest extends TestCase {
         fs.delete(new Path(INPUT), true);
       if (fs.exists(new Path(OUTPUT)))
         fs.delete(new Path(OUTPUT), true);
-      if (fs.exists(new Path(TEXT_INPUT)))
+        String TEXT_INPUT = "/tmp/page.txt";
+        if (fs.exists(new Path(TEXT_INPUT)))
         fs.delete(new Path(TEXT_INPUT), true);
       if (fs.exists(new Path(TEXT_OUTPUT)))
         fs.delete(new Path(TEXT_OUTPUT), true);

@@ -25,7 +25,7 @@ import org.apache.hama.bsp.sync.SyncException;
  * The {@link BSPInterface} defines the basic operations needed to implement a
  * BSP based algorithm. The implementing algorithm takes {@link BSPPeer}s as
  * parameters which are responsible for communication, reading K1-V1 inputs,
- * collecting k2-V2 outputs and exchanging messages of type M.
+ * collecting K2-V2 outputs and exchanging messages of type M.
  *
  * @param <K1> the type of keys to be read from input
  * @param <V1> the type of values to be read from input

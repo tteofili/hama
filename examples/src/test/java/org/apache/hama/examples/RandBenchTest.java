@@ -17,21 +17,17 @@
  */
 package org.apache.hama.examples;
 
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 /**
  * Testcase for {@link org.apache.hama.examples.RandBench}
  */
 public class RandBenchTest {
   @Test
-  public void testCorrectRandBenchExecution() {
-    try {
-      RandBench.main(new String[] { "10", "3", "2" });
-    } catch (Exception e) {
-      fail(e.getLocalizedMessage());
-    }
+  public void testCorrectRandBenchExecution() throws Exception {
+    RandBench.main(new String[] { "10", "3", "2" });
   }
 
   @Test

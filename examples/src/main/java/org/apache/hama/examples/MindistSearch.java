@@ -103,7 +103,7 @@ public class MindistSearch {
 
   }
 
-  public static class MinTextCombiner extends Combiner<Text> {
+  public static class MinTextCombiner implements Combiner<Text> {
 
     @Override
     public Text combine(Iterable<Text> messages) {

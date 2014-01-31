@@ -67,7 +67,7 @@ public class CombineExample {
 
   }
 
-  public static class SumCombiner extends Combiner<IntWritable> {
+  public static class SumCombiner implements Combiner<IntWritable> {
 
     @Override
     public IntWritable combine(Iterable<IntWritable> messages) {

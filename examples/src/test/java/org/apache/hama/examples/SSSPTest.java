@@ -51,7 +51,6 @@ public class SSSPTest extends TestCase {
   };
 
   private static String INPUT = "/tmp/sssp-tmp.seq";
-  private static String TEXT_INPUT = "/tmp/sssp.txt";
   private static String TEXT_OUTPUT = INPUT + "sssp.txt.seq";
   private static String OUTPUT = "/tmp/sssp-out";
   private Configuration conf = new HamaConfiguration();
@@ -129,7 +128,8 @@ public class SSSPTest extends TestCase {
         fs.delete(new Path(INPUT), true);
       if (fs.exists(new Path(OUTPUT)))
         fs.delete(new Path(OUTPUT), true);
-      if (fs.exists(new Path(TEXT_INPUT)))
+        String TEXT_INPUT = "/tmp/sssp.txt";
+        if (fs.exists(new Path(TEXT_INPUT)))
         fs.delete(new Path(TEXT_INPUT), true);
       if (fs.exists(new Path(TEXT_OUTPUT)))
         fs.delete(new Path(TEXT_OUTPUT), true);

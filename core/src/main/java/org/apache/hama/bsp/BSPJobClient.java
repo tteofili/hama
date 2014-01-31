@@ -298,7 +298,7 @@ public class BSPJobClient extends Configured implements Tool {
 
   static Random r = new Random();
 
-  public RunningJob submitJobInternal(BSPJob pJob, BSPJobID jobId)
+  private RunningJob submitJobInternal(BSPJob pJob, BSPJobID jobId)
       throws IOException {
     BSPJob job = pJob;
     job.setJobID(jobId);
@@ -632,24 +632,21 @@ public class BSPJobClient extends Configured implements Tool {
    * Monitor a job and print status in real-time as progress is made and tasks
    * fail.
    * 
-   * @param job
    * @param info
    * @return true, if job is successful
    * @throws IOException
    * @throws InterruptedException
    */
-  public boolean monitorAndPrintJob(BSPJob job, RunningJob info)
+  public boolean monitorAndPrintJob(RunningJob info)
       throws IOException, InterruptedException {
     String lastReport = null;
     LOG.info("Running job: " + info.getID());
     int eventCounter = 0;
 
-    while (!job.isComplete()) {
+    while (!info.isComplete()) {
       Thread.sleep(3000);
-      long step = job.progress();
-      String report = "";
-
-      report = "Current supersteps number: " + step;
+      long step = info.progress();
+      String report = "Current supersteps number: " + step;
 
       if (!report.equals(lastReport)) {
         LOG.info(report);
@@ -668,7 +665,7 @@ public class BSPJobClient extends Configured implements Tool {
       }
     }
 
-    if (job.isSuccessful()) {
+    if (info.isSuccessful()) {
       LOG.info("The total number of supersteps: " + info.getSuperstepCount());
       info.getStatus()
           .getCounter()
@@ -679,7 +676,7 @@ public class BSPJobClient extends Configured implements Tool {
       LOG.info("Job failed.");
     }
 
-    return job.isSuccessful();
+    return info.isSuccessful();
   }
 
   static String getTaskLogURL(TaskAttemptID taskId, String baseUrl) {

@@ -18,8 +18,6 @@
 package org.apache.hama.examples;
 
 import java.io.IOException;
-import java.util.Iterator;
-
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -48,7 +46,7 @@ public class SSSP {
 
     public boolean isStartVertex() {
       Text startVertex = new Text(getConf().get(START_VERTEX));
-      return (this.getVertexID().equals(startVertex)) ? true : false;
+      return this.getVertexID().equals(startVertex);
     }
 
     @Override
@@ -71,18 +69,17 @@ public class SSSP {
     }
   }
 
-  public static class MinIntCombiner extends Combiner<IntWritable> {
+  public static class MinIntCombiner implements Combiner<IntWritable> {
 
     @Override
     public IntWritable combine(Iterable<IntWritable> messages) {
       int minDist = Integer.MAX_VALUE;
 
-      Iterator<IntWritable> it = messages.iterator();
-      while (it.hasNext()) {
-        int msgValue = it.next().get();
-        if (minDist > msgValue)
-          minDist = msgValue;
-      }
+        for (IntWritable message : messages) {
+            int msgValue = message.get();
+            if (minDist > msgValue)
+                minDist = msgValue;
+        }
 
       return new IntWritable(minDist);
     }
