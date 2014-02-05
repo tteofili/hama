@@ -64,8 +64,6 @@ public final class BipartiteMatching {
 
     @Override
     public void compute(Iterable<TextPair> msgs) throws IOException {
-      Random random = new Random(Long.parseLong(getConf().get(
-          SEED_CONFIGURATION_KEY)));
       if (isMatched()) {
         voteToHalt();
         return;
@@ -73,80 +71,58 @@ public final class BipartiteMatching {
 
       switch ((int) getSuperstepCount() % 4) {
         case 0:
-          if (Objects.equal(getComponent(), LEFT)) {
+          if (Objects.equal(getValue().getSecond(), LEFT)) {
             sendMessageToNeighbors(getNewMessage());
           }
           break;
 
         case 1:
-          if (Objects.equal(getComponent(), RIGHT)) {
+          if (Objects.equal(getValue().getSecond(), RIGHT)) {
             List<TextPair> buffer = new ArrayList<TextPair>();
             for (TextPair next : msgs) {
               buffer.add(new TextPair(next.getFirst(), next.getSecond()));
             }
             if (buffer.size() > 0) {
+              Random random = new Random(System.currentTimeMillis());
               TextPair luckyMsg = buffer.get(RandomUtils.nextInt(random,
                   buffer.size()));
 
-              Text sourceVertex = getSourceVertex(luckyMsg);
-              sendMessage(sourceVertex, getNewMessage());
+              sendMessage(luckyMsg.getFirst(), getNewMessage());
             }
           }
           break;
 
         case 2:
-          if (Objects.equal(getComponent(), LEFT)) {
+          if (Objects.equal(getValue().getSecond(), LEFT)) {
             List<TextPair> buffer = new ArrayList<TextPair>();
             for (TextPair next : msgs) {
               buffer.add(new TextPair(next.getFirst(), next.getSecond()));
             }
             if (buffer.size() > 0) {
+              Random random = new Random(System.currentTimeMillis());
               TextPair luckyMsg = buffer.get(RandomUtils.nextInt(random,
                   buffer.size()));
 
-              Text sourceVertex = getSourceVertex(luckyMsg);
-              setMatchVertex(sourceVertex);
-              sendMessage(sourceVertex, getNewMessage());
+              getValue().setFirst(luckyMsg.getFirst());
+              sendMessage(luckyMsg.getFirst(), getNewMessage());
             }
           }
           break;
 
         case 3:
-          if (Objects.equal(getComponent(), RIGHT)) {
+          if (Objects.equal(getValue().getSecond(), RIGHT)) {
             Iterator<TextPair> messages = msgs.iterator();
             if (messages.hasNext()) {
               TextPair next = messages.next();
-              Text sourceVertex = getSourceVertex(next);
-              setMatchVertex(sourceVertex);
+              getValue().setFirst(next.getFirst());
             }
           }
           break;
       }
     }
 
-    /**
-     * Finds the vertex from which "msg" came.
-     */
-    private static Text getSourceVertex(TextPair msg) {
-      return msg.getFirst();
-    }
-
-    /**
-     * Pairs "this" vertex with the "matchVertex"
-     */
-    private void setMatchVertex(Text matchVertex) {
-      getValue().setFirst(matchVertex);
-    }
-
     private TextPair getNewMessage() {
       return new TextPair(new Text(getVertexID()), new Text("1"));
-    }
-
-    /**
-     * Returns the component{LEFT/RIGHT} to which this vertex belongs.
-     */
-    private Text getComponent() {
-      return getValue().getSecond();
     }
 
     private boolean isMatched() {
@@ -158,10 +134,10 @@ public final class BipartiteMatching {
   /**
    * 
    * Input graph is given as<br/>
-   * <Vertex> <component value>: <adjacent_vertex_1> <adjacent_vertex_2> ..<br/>
+   * <Vertex> <component value>:<edge 1> <edge 2> ..<br/>
    * A L:B D<br/>
-   * B R:A C<br/>
-   * C L:B D<br/>
+   * B R:A<br/>
+   * C L:B<br/>
    * D R:A C<br/>
    */
   public static class BipartiteMatchingVertexReader extends
@@ -199,10 +175,7 @@ public final class BipartiteMatching {
     // set the defaults
     job.setMaxIteration(30);
     job.setNumBspTask(2);
-    conf.set(SEED_CONFIGURATION_KEY, System.currentTimeMillis() + "");
 
-    if (args.length == 5)
-      conf.set(SEED_CONFIGURATION_KEY, args[4]);
     if (args.length >= 4)
       job.setNumBspTask(Integer.parseInt(args[3]));
     if (args.length >= 3)
