@@ -20,6 +20,7 @@ package org.apache.hama.bsp;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Iterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CyclicBarrier;
@@ -350,8 +351,9 @@ public class LocalBSPRunner implements JobSubmissionProtocol {
     @Override
     public void transfer(InetSocketAddress addr, BSPMessageBundle<M> bundle)
         throws IOException {
-      for (M value : bundle.getMessages()) {
-        MANAGER_MAP.get(addr).localQueueForNextIteration.add(value);
+      Iterator<M> it = bundle.iterator();
+      while(it.hasNext()) {
+        MANAGER_MAP.get(addr).localQueueForNextIteration.add(it.next());
         peer.incrementCounter(BSPPeerImpl.PeerCounter.TOTAL_MESSAGES_RECEIVED,
             1L);
       }
@@ -407,6 +409,12 @@ public class LocalBSPRunner implements JobSubmissionProtocol {
     public boolean statusUpdate(TaskAttemptID taskId, TaskStatus taskStatus)
         throws IOException, InterruptedException {
       return true;
+    }
+
+    @Override
+    public int getAssignedPortNum(TaskAttemptID taskid) {
+      // TODO Auto-generated method stub
+      return 0;
     }
   }
 
