@@ -18,7 +18,6 @@
 package org.apache.hama.examples;
 
 import java.io.IOException;
-
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -27,7 +26,8 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hama.HamaConfiguration;
 import org.apache.hama.bsp.BSPJob;
-import org.apache.hama.bsp.FileOutputFormat;
+import org.apache.hama.bsp.BSPJobClient;
+import org.apache.hama.bsp.ClusterStatus;
 import org.apache.hama.bsp.TextOutputFormat;
 import org.apache.hama.commons.io.VectorWritable;
 import org.apache.hama.ml.regression.GradientDescentBSP;
@@ -51,7 +51,7 @@ public class GradientDescentExample {
 
     // BSP job configuration
     HamaConfiguration conf = new HamaConfiguration();
-    conf.setFloat(GradientDescentBSP.ALPHA, 0.002f);
+    conf.setFloat(GradientDescentBSP.ALPHA, 0.0000003f);
     conf.setFloat(GradientDescentBSP.COST_THRESHOLD, 0.5f);
     conf.setInt(GradientDescentBSP.ITERATIONS_THRESHOLD, 300);
     conf.setInt(GradientDescentBSP.INITIAL_THETA_VALUES, 10);
@@ -62,9 +62,7 @@ public class GradientDescentExample {
       } else if (args[1].equals("linear")) {
         // do nothing as 'linear' is default
       } else {
-        throw new RuntimeException(new StringBuilder(
-            "unsupported RegressionModel").append(args[1])
-            .append(", use 'logistic' or 'linear'").toString());
+        throw new RuntimeException("unsupported RegressionModel" + args[1] + ", use 'logistic' or 'linear'");
       }
     }
 
@@ -79,7 +77,10 @@ public class GradientDescentExample {
     bsp.setOutputKeyClass(VectorWritable.class);
     bsp.setOutputValueClass(DoubleWritable.class);
     bsp.setOutputFormat(TextOutputFormat.class);
-    FileOutputFormat.setOutputPath(bsp, TMP_OUTPUT);
+    bsp.setOutputPath(TMP_OUTPUT);
+    BSPJobClient jobClient = new BSPJobClient(conf);
+    ClusterStatus cluster = jobClient.getClusterStatus(true);
+    bsp.setNumBspTask(cluster.getMaxTasks());
 
     long startTime = System.currentTimeMillis();
     if (bsp.waitForCompletion(true)) {
@@ -93,14 +94,14 @@ public class GradientDescentExample {
   static void printOutput(HamaConfiguration conf) throws IOException {
     FileSystem fs = FileSystem.get(conf);
     FileStatus[] files = fs.listStatus(TMP_OUTPUT);
-    for (int i = 0; i < files.length; i++) {
-      if (files[i].getLen() > 0) {
-        FSDataInputStream in = fs.open(files[i].getPath());
-        IOUtils.copyBytes(in, System.out, conf, false);
-        in.close();
-        break;
+      for (FileStatus file : files) {
+          if (file.getLen() > 0) {
+              FSDataInputStream in = fs.open(file.getPath());
+              IOUtils.copyBytes(in, System.out, conf, false);
+              in.close();
+              break;
+          }
       }
-    }
 
     fs.delete(TMP_OUTPUT, true);
   }

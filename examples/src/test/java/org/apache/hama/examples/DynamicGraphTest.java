@@ -20,31 +20,27 @@ package org.apache.hama.examples;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import junit.framework.TestCase;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hama.HamaConfiguration;
+import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link org.apache.hama.examples.DynamicGraph}
  */
-public class DynamicGraphTest extends TestCase {
+public class DynamicGraphTest {
   private static String OUTPUT = "/tmp/page-out";
   private Configuration conf = new HamaConfiguration();
   private FileSystem fs;
 
-  private void deleteTempDirs() {
-    try {
+  private void deleteTempDirs() throws Exception {
       if (fs.exists(new Path(OUTPUT)))
         fs.delete(new Path(OUTPUT), true);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
   private void verifyResult() throws IOException {
@@ -62,17 +58,15 @@ public class DynamicGraphTest extends TestCase {
     }
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void setUp() throws Exception {
     fs = FileSystem.get(conf);
   }
 
   @Test
-  public void test() throws IOException, InterruptedException,
-      ClassNotFoundException {
+  public void testGraphGeneration() throws Exception {
     try {
-      DynamicGraph.main(new String[] { "src/test/resources/dg.txt", OUTPUT });
+      DynamicGraph.main(new String[] { getClass().getResource("/dg.txt").getFile(), OUTPUT });
       verifyResult();
     } finally {
       deleteTempDirs();

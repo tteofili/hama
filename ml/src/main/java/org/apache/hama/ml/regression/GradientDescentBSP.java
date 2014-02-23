@@ -17,6 +17,11 @@
  */
 package org.apache.hama.ml.regression;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hama.bsp.BSP;
 import org.apache.hama.bsp.BSPPeer;
@@ -27,10 +32,6 @@ import org.apache.hama.commons.math.DoubleVector;
 import org.apache.hama.commons.util.KeyValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Arrays;
 
 /**
  * A gradient descent (see
@@ -48,6 +49,7 @@ public class GradientDescentBSP
   public static final String COST_THRESHOLD = "gd.cost.threshold";
   public static final String ITERATIONS_THRESHOLD = "gd.iterations.threshold";
   public static final String REGRESSION_MODEL_CLASS = "gd.regression.model";
+  public static final String CACHE_INPUTS = "gd.cache.inputs";
 
   private boolean master;
   private DoubleVector theta;
@@ -57,6 +59,8 @@ public class GradientDescentBSP
   private RegressionModel regressionModel;
   private int iterationsThreshold;
   private int m;
+  private boolean cacheInputs;
+  private List<KeyValuePair<VectorWritable, DoubleWritable>> cachedInputs;
 
   @SuppressWarnings("unchecked")
   @Override
@@ -68,7 +72,11 @@ public class GradientDescentBSP
     costThreshold = peer.getConfiguration().getFloat(COST_THRESHOLD, 0.1f);
     iterationsThreshold = peer.getConfiguration().getInt(ITERATIONS_THRESHOLD,
         10000);
-    alpha = peer.getConfiguration().getFloat(ALPHA, 0.003f);
+    alpha = peer.getConfiguration().getFloat(ALPHA, 0.001f);
+    cacheInputs = peer.getConfiguration().getBoolean(CACHE_INPUTS, false); // TODO : fix cached inputs usage
+    if (cacheInputs) {
+        cachedInputs = new LinkedList<KeyValuePair<VectorWritable, DoubleWritable>>();
+    }
     try {
       regressionModel = ((Class<? extends RegressionModel>) peer
           .getConfiguration().getClass(REGRESSION_MODEL_CLASS,
@@ -117,7 +125,8 @@ public class GradientDescentBSP
         break;
 
       peer.sync();
-      peer.reopenInput();
+      if (!cacheInputs)
+        peer.reopenInput();
 
       // third superstep : calculate partial derivatives' deltas in parallel
       double[] thetaDelta = calculatePartialDerivatives(peer);
@@ -224,6 +233,9 @@ public class GradientDescentBSP
 
       // adds to local cost
       localCost += costForX;
+      if (cacheInputs) {
+          cachedInputs.add(kvp);
+      }
     }
     return localCost;
   }
@@ -241,20 +253,34 @@ public class GradientDescentBSP
   private double[] calculatePartialDerivatives(
       BSPPeer<VectorWritable, DoubleWritable, VectorWritable, DoubleWritable, VectorWritable> peer)
       throws IOException {
-    KeyValuePair<VectorWritable, DoubleWritable> kvp;
     double[] thetaDelta = new double[theta.getLength()];
-    while ((kvp = peer.readNext()) != null) {
-      DoubleVector x = kvp.getKey().getVector();
-      double y = kvp.getValue().get();
-      BigDecimal difference = regressionModel.applyHypothesis(theta, x).subtract(BigDecimal.valueOf(y));
-      for (int j = 0; j < theta.getLength(); j++) {
-        thetaDelta[j] += difference.multiply(BigDecimal.valueOf(x.get(j))).doubleValue();
-      }
+    if (cacheInputs) {
+        for (KeyValuePair<VectorWritable, DoubleWritable> kvp : cachedInputs) {
+            derive(kvp, thetaDelta);
+        }
+    }
+    else {
+        KeyValuePair<VectorWritable, DoubleWritable> kvp;
+        while ((kvp = peer.readNext()) != null) {
+            derive(kvp, thetaDelta);
+        }
+    }
+    if (cacheInputs) {
+        cachedInputs.clear();
     }
     return thetaDelta;
   }
 
-  @Override
+    private void derive(KeyValuePair<VectorWritable, DoubleWritable> kvp, double[] thetaDelta) {
+        DoubleVector x = kvp.getKey().getVector();
+        double y = kvp.getValue().get();
+        BigDecimal difference = regressionModel.applyHypothesis(theta, x).subtract(BigDecimal.valueOf(y));
+        for (int j = 0; j < theta.getLength(); j++) {
+          thetaDelta[j] += difference.multiply(BigDecimal.valueOf(x.get(j))).doubleValue();
+        }
+    }
+
+    @Override
   public void cleanup(
       BSPPeer<VectorWritable, DoubleWritable, VectorWritable, DoubleWritable, VectorWritable> peer)
       throws IOException {

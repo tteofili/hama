@@ -25,9 +25,15 @@ import org.junit.Test;
  */
 public class LogisticRegressionTest {
 
-  @Test
-  public void testCorrectGDWithLogisticRegressionExecution() throws Exception {
-    GradientDescentExample.main(new String[] {
-       getClass().getResource("/logistic_regression_sample.txt").getFile(), "logistic" });
-  }
+//  @Test
+//  public void testCorrectGDWithLogisticRegressionExecution() throws Exception {
+//    GradientDescentExample.main(new String[] {
+//       getClass().getResource("/logistic_regression_sample.txt").getFile(), "logistic" });
+//  }
+
+    @Test
+    public void testCorrectGDWithLogisticRegressionExecutionOnBigData() throws Exception {
+        GradientDescentExample.main(new String[] {
+                "/Users/teofili/Desktop/lr.txt", "linear" });
+    }
 }

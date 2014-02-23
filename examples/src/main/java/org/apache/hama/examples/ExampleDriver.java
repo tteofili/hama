@@ -19,6 +19,7 @@
  */
 package org.apache.hama.examples;
 
+import org.apache.hama.examples.hptl.SampleIOBSPJobRunner;
 import org.apache.hama.examples.util.Generator;
 import org.apache.hama.util.ProgramDriver;
 
@@ -40,6 +41,7 @@ public class ExampleDriver {
       pgd.addClass("kmeans", Kmeans.class, "K-Means Clustering");
       pgd.addClass("gd", GradientDescentExample.class, "Gradient Descent");
       pgd.addClass("neuralnets", NeuralNetwork.class, "Neural Network classification");
+      pgd.addClass("sample bsp", SampleIOBSPJobRunner.class, "Sample BSP MAX");
 
       pgd.addClass("gen", Generator.class, "Random Data Generator Util");
       pgd.driver(args);

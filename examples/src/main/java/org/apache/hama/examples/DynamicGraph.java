@@ -41,7 +41,7 @@ import org.apache.hama.graph.VertexInputReader;
  * NOTE: Graph modification APIs can be used only with {@link MapVerticesInfo}.
  * 
  * This is an example of how to manipulate Graphs dynamically. The input of this
- * example is a number in each row. We assume that the is a vertex with ID:1
+ * example is a number in each row. We assume that there is a vertex with ID:1
  * which is responsible to create a sum vertex that will aggregate the values of
  * the other vertices. During the aggregation, sum vertex will delete all other
  * vertices.
